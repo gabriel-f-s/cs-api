@@ -4,3 +4,11 @@ spring:
 
   profiles:
     active: dev
+
+rsa:
+  public-key: classpath:certs/public.pem
+  private-key: classpath:certs/private.pem
+
+jwt:
+  access-token:
+    expiration-minutes: 15
