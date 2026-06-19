@@ -1,3 +1,6 @@
 spring:
   application:
     name: cs_api
+
+  profiles:
+    active: dev
