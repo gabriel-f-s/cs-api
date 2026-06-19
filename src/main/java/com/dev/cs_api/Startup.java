@@ -4,10 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class CsApiApplication {
+public class Startup {
 
     public static void main(String[] args) {
-        SpringApplication.run(CsApiApplication.class, args);
+        SpringApplication.run(Startup.class, args);
     }
 
 }
