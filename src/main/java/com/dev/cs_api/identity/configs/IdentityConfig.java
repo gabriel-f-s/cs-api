@@ -1,6 +1,6 @@
 package com.dev.cs_api.identity.configs;
 
-import com.dev.cs_api.identity.dtos.RsaKeyProperties;
+import com.dev.cs_api.identity.dtos.auth.RsaKeyProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
