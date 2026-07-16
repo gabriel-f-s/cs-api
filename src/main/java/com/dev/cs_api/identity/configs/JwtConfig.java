@@ -1,6 +1,6 @@
 package com.dev.cs_api.identity.configs;
 
-import com.dev.cs_api.identity.dtos.RsaKeyProperties;
+import com.dev.cs_api.identity.dtos.auth.RsaKeyProperties;
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;

@@ -1,11 +1,19 @@
 package com.dev.cs_api.identity.services;
 
+import com.dev.cs_api.core.security.SecurityUtils;
+import com.dev.cs_api.identity.dtos.auth.MfaDisableRequest;
+import com.dev.cs_api.identity.dtos.auth.MfaSetupResponse;
 import com.dev.cs_api.identity.exceptions.InvalidTokenException;
 import com.dev.cs_api.identity.models.User;
+import com.dev.cs_api.identity.repositories.UserRepository;
 import com.warrenstrange.googleauth.GoogleAuthenticator;
+import com.warrenstrange.googleauth.GoogleAuthenticatorKey;
+import com.warrenstrange.googleauth.GoogleAuthenticatorQRGenerator;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.oauth2.jwt.*;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.Instant;
@@ -18,9 +26,45 @@ public class MfaService {
     private final JwtEncoder jwtEncoder;
     private final JwtDecoder jwtDecoder;
 
-    public MfaService(JwtEncoder jwtEncoder, JwtDecoder jwtDecoder) {
+    private final UserRepository userRepository;
+
+    public MfaService(JwtEncoder jwtEncoder, JwtDecoder jwtDecoder, UserRepository userRepository) {
         this.jwtEncoder = jwtEncoder;
         this.jwtDecoder = jwtDecoder;
+        this.userRepository = userRepository;
+    }
+
+    @Transactional
+    public MfaSetupResponse generateSetup() {
+        User user = findUser();
+
+        if (Boolean.TRUE.equals(user.getMfaEnabled())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "MFA já está ativado para este usuário.");
+        }
+
+        GoogleAuthenticator gAuth = new GoogleAuthenticator();
+        GoogleAuthenticatorKey key = gAuth.createCredentials();
+        String secret = key.getKey();
+        user.setMfaSecret(secret);
+        userRepository.save(user);
+        String otpAuthUri = GoogleAuthenticatorQRGenerator.getOtpAuthTotpURL("Controle Smart", user.getEmail(), key);
+
+        return new MfaSetupResponse(secret, otpAuthUri);
+    }
+
+    @Transactional
+    public void confirmSetup(String code) {
+        User user = findUser();
+        if (user.getMfaSecret() == null)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Processo de setup do MFA não foi iniciado.");
+
+        boolean isCodeValid = verifyMfaCode(user.getMfaSecret(), code);
+
+        if (!isCodeValid)
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Código incorreto. Tente novamente.");
+
+        user.setMfaEnabled(true);
+        userRepository.save(user);
     }
 
     public String generateMfaToken(User user) {
@@ -35,9 +79,9 @@ public class MfaService {
         return jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
     }
 
-    public boolean verifyMfaCode(String secret, int code) {
+    public boolean verifyMfaCode(String secret, String code) {
         GoogleAuthenticator authenticator = new GoogleAuthenticator();
-        return authenticator.authorize(secret, code);
+        return authenticator.authorize(secret, Integer.parseInt(code));
     }
 
     public UUID extractUserIdFromMfaToken(String token) {
@@ -50,5 +94,23 @@ public class MfaService {
         } catch (Exception e) {
             throw new InvalidTokenException("Token MFA inválido ou expirado");
         }
+    }
+
+    public void disableMfa(String code) {
+        User user = findUser();
+
+        boolean isCodeValid = verifyMfaCode(user.getMfaSecret(), code);
+
+        if (!isCodeValid)
+            throw new InvalidTokenException( "Código MFA inválido");
+
+        user.setMfaEnabled(false);
+        user.setMfaSecret(null);
+        userRepository.save(user);
+    }
+
+    private User findUser() {
+        return userRepository.findById(SecurityUtils.getUserId())
+                .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado"));
     }
 }

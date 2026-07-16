@@ -1,4 +1,4 @@
-package com.dev.cs_api.identity.dtos;
+package com.dev.cs_api.identity.dtos.auth;
 
 import com.dev.cs_api.identity.enums.AuthStatus;
 

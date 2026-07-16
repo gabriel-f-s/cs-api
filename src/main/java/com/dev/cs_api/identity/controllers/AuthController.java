@@ -1,9 +1,6 @@
 package com.dev.cs_api.identity.controllers;
 
-import com.dev.cs_api.identity.dtos.AuthResponse;
-import com.dev.cs_api.identity.dtos.LoginRequest;
-import com.dev.cs_api.identity.dtos.MfaRequest;
-import com.dev.cs_api.identity.dtos.RefreshRequest;
+import com.dev.cs_api.identity.dtos.auth.*;
 import com.dev.cs_api.identity.services.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -15,14 +12,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/auth")
-@Tag(name = "Authentication")
+@RequestMapping("/auth")
+@Tag(name = "Autenticação", description = "Autenticação do sistema")
 public class AuthController {
 
     private final AuthService authService;
@@ -31,36 +26,59 @@ public class AuthController {
         this.authService = authService;
     }
 
-    @Operation(summary = "Log in to the application")
+    @Operation(summary = "Realiza login na aplicação")
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(
             @Valid @RequestBody LoginRequest request,
             HttpServletRequest servletRequest
     ) {
         Map<String, String> userAgentAndIpAddress = getUserAgentAndIpAddress(servletRequest);
-        return ResponseEntity.ok(authService.login(request, userAgentAndIpAddress.get("userAgent"), userAgentAndIpAddress.get("ipAddress")));
+        return ResponseEntity.ok(authService.login(
+                request,
+                userAgentAndIpAddress.get("userAgent"),
+                userAgentAndIpAddress.get("ipAddress")
+        ));
     }
 
-    @Operation(summary = "Refresh the application token")
+    @Operation(summary = "Atualiza o refresh token")
     @PostMapping("/refresh")
     public ResponseEntity<AuthResponse> refresh(@Valid @RequestBody RefreshRequest request) {
         return ResponseEntity.ok(authService.refresh(request));
     }
 
-    @Operation(summary = "Log out from the application")
+    @Operation(summary = "Sai da aplicação")
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(@Valid @RequestBody RefreshRequest request) {
         authService.logout(request);
         return ResponseEntity.ok().build();
     }
 
+    @Operation(summary = "Verifica o MFA e realiza o login")
     @PostMapping("/mfa/verify")
     public ResponseEntity<AuthResponse> verifyMFAAndLogin(
-            @Valid @RequestBody MfaRequest request,
+            @Valid @RequestBody MfaVerifyRequest request,
             HttpServletRequest servletRequest
     ) {
         Map<String, String> userAgentAndIpAddress = getUserAgentAndIpAddress(servletRequest);
-        return ResponseEntity.ok(authService.verifyMfaAndLogin(request, userAgentAndIpAddress.get("userAgent"), userAgentAndIpAddress.get("ipAddress")));
+        return ResponseEntity.ok(authService.verifyMfaAndLogin(
+                request,
+                userAgentAndIpAddress.get("userAgent"),
+                userAgentAndIpAddress.get("ipAddress")
+        ));
+    }
+
+    @Operation(summary = "Atualiza a primeira senha de login")
+    @PostMapping("/first-password")
+    public ResponseEntity<AuthResponse> changeFirstPassword(
+            @Valid @RequestBody FirstPasswordChangeRequest request,
+            HttpServletRequest servletRequest
+    ) {
+        Map<String, String> userAgentAndIpAddress = getUserAgentAndIpAddress(servletRequest);
+        return ResponseEntity.ok(authService.changeFirstPassword(
+                request,
+                userAgentAndIpAddress.get("userAgent"),
+                userAgentAndIpAddress.get("ipAddress")
+        ));
     }
 
     private Map<String, String> getUserAgentAndIpAddress(HttpServletRequest servletRequest) {
