@@ -18,8 +18,7 @@ public class Permission {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Enumerated(EnumType.STRING)
-    private PermissionName name;
+    private String name;
 
     private String description;
 
