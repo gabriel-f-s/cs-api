@@ -26,6 +26,9 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    @Column(name = "name", nullable = false)
+    private String name;
+
     @Column(name = "email", nullable = false, unique = true)
     private String email;
 
@@ -54,6 +57,9 @@ public class User implements UserDetails {
     @Column(name = "mfa_secret")
     private String mfaSecret;
 
+    @Column(name = "force_password_change")
+    private Boolean forcePasswordChange = true;
+
     @CreatedDate
     @Column(name = "created_at")
     private LocalDateTime createdAt;
@@ -72,7 +78,7 @@ public class User implements UserDetails {
         }
 
         return this.role.getPermissions().stream()
-                .map(permission -> new SimpleGrantedAuthority(permission.getName().getPermission()))
+                .map(permission -> new SimpleGrantedAuthority(permission.getName()))
                 .collect(Collectors.toSet());
     }
 
