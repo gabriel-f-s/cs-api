@@ -3,10 +3,11 @@ package com.dev.cs_api.identity.services;
 import com.dev.cs_api.core.security.SecurityUtils;
 import com.dev.cs_api.identity.dtos.user.UserCreateRequest;
 import com.dev.cs_api.identity.dtos.user.UserDetailResponse;
-import com.dev.cs_api.identity.dtos.user.UserSummaryResponse;
+import com.dev.cs_api.identity.dtos.global.AdminUserSummaryResponse;
 import com.dev.cs_api.identity.dtos.user.UserUpdateRequest;
 import com.dev.cs_api.identity.enums.RoleName;
 import com.dev.cs_api.identity.enums.UserStatus;
+import com.dev.cs_api.identity.exceptions.NoPermissionException;
 import com.dev.cs_api.identity.models.Role;
 import com.dev.cs_api.identity.models.User;
 import com.dev.cs_api.identity.repositories.RoleRepository;
@@ -40,39 +41,42 @@ public class TenantUserService {
         return new UserDetailResponse(user);
     }
 
-    public Page<UserSummaryResponse> findAll(Pageable pageable) {
+    public Page<AdminUserSummaryResponse> findAll(Pageable pageable) {
         Page<User> users = userRepository.findAllByTenantId(SecurityUtils.getTenantId(), pageable);
-        return users.map(UserSummaryResponse::new);
+        return users.map(AdminUserSummaryResponse::new);
     }
 
     @Transactional
-    public UserSummaryResponse create(UserCreateRequest request) {
+    public UserDetailResponse create(UserCreateRequest request) {
         Role role = roleRepository.findByName(request.role()).orElseThrow(
                 () -> new EntityNotFoundException("Role não encontrado"));
+        User loggedUser = findUser(SecurityUtils.getUserId());
 
         if (userRepository.findByEmail(request.email()).isPresent())
             throw new EntityExistsException("Já existe um usuário com este E-mail");
 
-        try {
-            User newUser = new User();
-            newUser.setName(request.name());
-            newUser.setEmail(request.email());
-            newUser.setPhoneNumber(request.phoneNumber());
-            newUser.setRole(role);
-            newUser.setTenantId(SecurityUtils.getTenantId());
-            newUser.setStatus(UserStatus.ACTIVE);
+        if (role.getName() == RoleName.SYSTEM_ADMIN)
+            throw new NoPermissionException("Você não possui permissão para criar um Administrador do Sistema");
 
-            newUser.setPassword(passwordEncoder.encode(request.password()));
+        if (loggedUser.getRole().getName() == RoleName.MANAGER && role.getName() == RoleName.TENANT_ADMIN)
+            throw new NoPermissionException("Você não possui permissão para criar um Administrador");
 
-            userRepository.save(newUser);
-            return new UserSummaryResponse(newUser);
-        } catch (Exception e) {
-            throw new RuntimeException(e.getMessage());
-        }
+        User newUser = new User();
+        newUser.setName(request.name());
+        newUser.setEmail(request.email());
+        newUser.setPhoneNumber(request.phoneNumber());
+        newUser.setRole(role);
+        newUser.setTenantId(SecurityUtils.getTenantId());
+        newUser.setStatus(UserStatus.ACTIVE);
+
+        newUser.setPassword(passwordEncoder.encode(request.password()));
+
+        userRepository.save(newUser);
+        return new UserDetailResponse(newUser);
     }
 
     @Transactional
-    public UserSummaryResponse update(UUID userId, UserUpdateRequest request) {
+    public UserDetailResponse update(UUID userId, UserUpdateRequest request) {
         User user = findUser(userId);
 
         if (request.name() != null && !request.name().isBlank()) {
@@ -92,6 +96,10 @@ public class TenantUserService {
         if (request.role() != null && !request.role().isBlank()) {
             Role newRole = roleRepository.findByName(RoleName.valueOf(request.role()))
                     .orElseThrow(() -> new EntityNotFoundException("Role inválida"));
+
+            if (newRole.getName() == RoleName.SYSTEM_ADMIN)
+                throw new NoPermissionException("Você não possui permissão para criar um Administrador do Sistema");
+
             user.setRole(newRole);
         }
 
@@ -103,17 +111,16 @@ public class TenantUserService {
             }
         }
 
-        return new UserSummaryResponse(user);
+        return new UserDetailResponse(userRepository.save(user));
     }
 
     @Transactional
-    public UserDetailResponse toggleStatus(UUID userId) {
+    public void toggleStatus(UUID userId) {
         User user = findUser(userId);
-
         if (user.getStatus().equals(UserStatus.ACTIVE)) {
             user.setStatus(UserStatus.DISABLED);
         } else  { user.setStatus(UserStatus.ACTIVE); }
-        return new UserDetailResponse(userRepository.save(user));
+        userRepository.save(user);
     }
 
     @Transactional
