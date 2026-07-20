@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/profile")
-@Tag(name = "Perfil", description = "Perfil e configurações do User/Admin")
+@Tag(name = "Identity - Perfil", description = "Perfil e configurações do User/Admin")
 public class ProfileController {
 
     private final ProfileService profileService;

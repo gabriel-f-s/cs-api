@@ -14,7 +14,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/profile/security/mfa")
-@Tag(name = "MFA", description = "Configuração do MFA para o usuário")
+@Tag(name = "Identity - MFA", description = "Configuração do MFA para o usuário")
 public class MfaController {
 
     private final MfaService service;

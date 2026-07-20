@@ -1,24 +1,25 @@
 package com.dev.cs_api.identity.controllers;
 
-import com.dev.cs_api.identity.dtos.global.ProfileResponse;
 import com.dev.cs_api.identity.dtos.user.UserCreateRequest;
 import com.dev.cs_api.identity.dtos.user.UserDetailResponse;
-import com.dev.cs_api.identity.dtos.user.UserSummaryResponse;
+import com.dev.cs_api.identity.dtos.global.AdminUserSummaryResponse;
 import com.dev.cs_api.identity.dtos.user.UserUpdateRequest;
 import com.dev.cs_api.identity.services.TenantUserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.UUID;
 
 @RestController
 @RequestMapping("/users")
-@Tag(name = "Usuários do Tenant", description = "CRUD de usuários do tenant")
+@Tag(name = "Identity - Usuários do Tenant", description = "Gestão de Usuários do Tenant")
 public class TenantUserController {
 
     private final TenantUserService tenantUserService;
@@ -27,39 +28,47 @@ public class TenantUserController {
         this.tenantUserService = tenantUserService;
     }
 
-    @Operation(summary = "Retorna um usuário caso exista por ID")
+    @Operation(summary = "Retorna uma página contendo a quantidade solicitada de usuários")
+    @GetMapping
+    @PreAuthorize("hasAuthority('user:read')")
+    public ResponseEntity<Page<AdminUserSummaryResponse>> findAll(Pageable pageable) {
+        return ResponseEntity.ok(tenantUserService.findAll(pageable));
+    }
+
+    @Operation(summary = "Retorna um usuário existente por ID")
     @GetMapping("/{id}")
     @PreAuthorize("hasAuthority('user:read')")
     public ResponseEntity<UserDetailResponse> findOne(@PathVariable UUID id) {
         return ResponseEntity.ok(tenantUserService.findOne(id));
     }
 
-    @Operation(summary = "Retorna todos os usuários existentes")
-    @GetMapping
-    @PreAuthorize("hasAuthority('user:read')")
-    public ResponseEntity<Page<UserSummaryResponse>> findAll(Pageable pageable) {
-        return ResponseEntity.ok(tenantUserService.findAll(pageable));
-    }
-
     @Operation(summary = "Cria um usuário")
     @PostMapping
     @PreAuthorize("hasAuthority('user:create')")
-    public ResponseEntity<UserSummaryResponse> create(@RequestBody UserCreateRequest request) {
-        return ResponseEntity.ok(tenantUserService.create(request));
+    public ResponseEntity<UserDetailResponse> create(@RequestBody @Valid UserCreateRequest request) {
+        UserDetailResponse response = tenantUserService.create(request);
+        return ResponseEntity.created(
+                ServletUriComponentsBuilder
+                        .fromCurrentRequest()
+                        .path("/{id}")
+                        .buildAndExpand(response)
+                        .toUri()
+        ).build();
     }
 
-    @Operation(summary = "Atualiza em partes um usuário")
+    @Operation(summary = "Atualiza parcialmente um usuário")
     @PatchMapping("/{id}")
     @PreAuthorize("hasAuthority('user:update')")
-    public ResponseEntity<UserSummaryResponse> update(@PathVariable UUID id, @RequestBody UserUpdateRequest request) {
+    public ResponseEntity<UserDetailResponse> update(@PathVariable UUID id, @RequestBody UserUpdateRequest request) {
         return ResponseEntity.ok(tenantUserService.update(id, request));
     }
 
-    @Operation(summary = "Altera o status do usuário")
+    @Operation(summary = "Altera o status do usuário (ACTIVE ou DISABLED)")
     @PatchMapping("/{id}/toggle-status")
     @PreAuthorize("hasAuthority('user:update')")
-    public ResponseEntity<UserDetailResponse> toggleStatus(UUID id) {
-        return ResponseEntity.ok(tenantUserService.toggleStatus(id));
+    public ResponseEntity<Void> toggleStatus(@PathVariable UUID id) {
+        tenantUserService.toggleStatus(id);
+        return ResponseEntity.noContent().build();
     }
 
     @Operation(summary = "Deleta um usuário")
