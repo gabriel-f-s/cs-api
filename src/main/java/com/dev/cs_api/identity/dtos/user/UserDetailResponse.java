@@ -1,6 +1,7 @@
 package com.dev.cs_api.identity.dtos.user;
 
 import com.dev.cs_api.identity.enums.RoleName;
+import com.dev.cs_api.identity.enums.UserStatus;
 import com.dev.cs_api.identity.models.User;
 
 import java.time.LocalDateTime;
@@ -11,7 +12,7 @@ public record UserDetailResponse(
         String email,
         String phoneNumber,
         RoleName role,
-        Boolean active,
+        UserStatus status,
         LocalDateTime createdAt,
         LocalDateTime updatedAt
 ) {
@@ -22,7 +23,7 @@ public record UserDetailResponse(
                 user.getEmail(),
                 user.getPhoneNumber(),
                 user.getRole().getName(),
-                user.isEnabled(),
+                user.getStatus(),
                 user.getCreatedAt(),
                 user.getUpdatedAt()
         );
