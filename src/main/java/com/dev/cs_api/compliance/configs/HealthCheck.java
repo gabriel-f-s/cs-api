@@ -13,6 +13,15 @@ public class HealthCheck implements HealthIndicator {
 
     @Override
     public Health health() {
-        return null;
+        try {
+            return Health.up()
+                    .withDetail("api_status", "Operacional")
+                    .withDetail("version", "1.0.0")
+                    .build();
+        } catch (Exception e) {
+            return Health.down()
+                    .withDetail("erro", e.getMessage())
+                    .build();
+        }
     }
 }
