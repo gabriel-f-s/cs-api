@@ -55,4 +55,15 @@ public class IdentityExceptionHandler extends BaseExceptionHandler {
                 "identity"
         );
     }
+
+    @ExceptionHandler(NoPermissionException.class)
+    public ProblemDetail handleNoPermissionException(NoPermissionException exception) {
+        return createProblemDetail(
+                HttpStatus.FORBIDDEN,
+                exception.getMessage(),
+                "Ação Negada",
+                "urn:cs-api:identity:no-permission",
+                "identity"
+        );
+    }
 }
