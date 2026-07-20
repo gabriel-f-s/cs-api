@@ -1,4 +1,4 @@
-package com.dev.cs_api.identity.user.dtos.global;
+package com.dev.cs_api.identity.user.dtos;
 
 import com.dev.cs_api.identity.user.enums.RoleName;
 import com.dev.cs_api.identity.user.models.User;

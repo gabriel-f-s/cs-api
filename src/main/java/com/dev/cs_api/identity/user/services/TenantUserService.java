@@ -1,10 +1,10 @@
 package com.dev.cs_api.identity.user.services;
 
 import com.dev.cs_api.core.security.SecurityUtils;
-import com.dev.cs_api.identity.user.dtos.user.UserCreateRequest;
-import com.dev.cs_api.identity.user.dtos.user.UserDetailResponse;
-import com.dev.cs_api.identity.user.dtos.global.AdminUserSummaryResponse;
-import com.dev.cs_api.identity.user.dtos.user.UserUpdateRequest;
+import com.dev.cs_api.identity.user.dtos.UserCreateRequest;
+import com.dev.cs_api.identity.user.dtos.UserDetailResponse;
+import com.dev.cs_api.identity.user.dtos.AdminUserSummaryResponse;
+import com.dev.cs_api.identity.user.dtos.UserUpdateRequest;
 import com.dev.cs_api.identity.user.enums.RoleName;
 import com.dev.cs_api.identity.user.enums.UserStatus;
 import com.dev.cs_api.identity.user.exceptions.NoPermissionException;

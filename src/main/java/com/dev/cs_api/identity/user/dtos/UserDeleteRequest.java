@@ -1,4 +1,4 @@
-package com.dev.cs_api.identity.user.dtos.user;
+package com.dev.cs_api.identity.user.dtos;
 
 import java.util.UUID;
 

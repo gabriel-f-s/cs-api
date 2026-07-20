@@ -1,10 +1,10 @@
 package com.dev.cs_api.identity.user.controllers;
 
-import com.dev.cs_api.identity.user.dtos.global.MeResponse;
-import com.dev.cs_api.identity.user.dtos.global.ProfileResponse;
-import com.dev.cs_api.identity.user.dtos.global.SecurityProfileResponse;
-import com.dev.cs_api.identity.user.dtos.user.UserChangeEmailRequest;
-import com.dev.cs_api.identity.user.dtos.user.UserChangePasswordRequest;
+import com.dev.cs_api.identity.user.dtos.MeResponse;
+import com.dev.cs_api.identity.user.dtos.ProfileResponse;
+import com.dev.cs_api.identity.user.dtos.SecurityProfileResponse;
+import com.dev.cs_api.identity.user.dtos.UserChangeEmailRequest;
+import com.dev.cs_api.identity.user.dtos.UserChangePasswordRequest;
 import com.dev.cs_api.identity.user.services.ProfileService;
 import com.fasterxml.jackson.databind.JsonNode;
 import io.swagger.v3.oas.annotations.Operation;

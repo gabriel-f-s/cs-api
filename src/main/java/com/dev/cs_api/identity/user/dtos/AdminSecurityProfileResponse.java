@@ -1,6 +1,5 @@
-package com.dev.cs_api.identity.user.dtos.admin;
+package com.dev.cs_api.identity.user.dtos;
 
-import com.dev.cs_api.identity.user.dtos.global.SecurityProfileResponse;
 import com.dev.cs_api.identity.user.models.Admin;
 
 import java.time.LocalDateTime;

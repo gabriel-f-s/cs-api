@@ -1,13 +1,13 @@
 package com.dev.cs_api.identity.user.services;
 
 import com.dev.cs_api.core.security.SecurityUtils;
-import com.dev.cs_api.identity.user.dtos.global.ProfileResponse;
-import com.dev.cs_api.identity.user.dtos.admin.AdminSecurityProfileResponse;
-import com.dev.cs_api.identity.user.dtos.global.MeResponse;
-import com.dev.cs_api.identity.user.dtos.global.SecurityProfileResponse;
-import com.dev.cs_api.identity.user.dtos.user.UserChangeEmailRequest;
-import com.dev.cs_api.identity.user.dtos.user.UserChangePasswordRequest;
-import com.dev.cs_api.identity.user.dtos.user.UserSecurityProfileResponse;
+import com.dev.cs_api.identity.user.dtos.ProfileResponse;
+import com.dev.cs_api.identity.user.dtos.AdminSecurityProfileResponse;
+import com.dev.cs_api.identity.user.dtos.MeResponse;
+import com.dev.cs_api.identity.user.dtos.SecurityProfileResponse;
+import com.dev.cs_api.identity.user.dtos.UserChangeEmailRequest;
+import com.dev.cs_api.identity.user.dtos.UserChangePasswordRequest;
+import com.dev.cs_api.identity.user.dtos.UserSecurityProfileResponse;
 import com.dev.cs_api.identity.user.models.Admin;
 import com.dev.cs_api.identity.user.models.User;
 import com.dev.cs_api.identity.user.repositories.UserRepository;

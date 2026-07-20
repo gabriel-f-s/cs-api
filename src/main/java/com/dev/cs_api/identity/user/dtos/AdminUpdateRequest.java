@@ -1,4 +1,4 @@
-package com.dev.cs_api.identity.user.dtos.admin;
+package com.dev.cs_api.identity.user.dtos;
 
 public record AdminUpdateRequest(
         String name,

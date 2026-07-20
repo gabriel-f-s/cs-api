@@ -1,9 +1,9 @@
 package com.dev.cs_api.identity.user.controllers;
 
-import com.dev.cs_api.identity.user.dtos.user.UserCreateRequest;
-import com.dev.cs_api.identity.user.dtos.user.UserDetailResponse;
-import com.dev.cs_api.identity.user.dtos.global.AdminUserSummaryResponse;
-import com.dev.cs_api.identity.user.dtos.user.UserUpdateRequest;
+import com.dev.cs_api.identity.user.dtos.UserCreateRequest;
+import com.dev.cs_api.identity.user.dtos.UserDetailResponse;
+import com.dev.cs_api.identity.user.dtos.AdminUserSummaryResponse;
+import com.dev.cs_api.identity.user.dtos.UserUpdateRequest;
 import com.dev.cs_api.identity.user.services.TenantUserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

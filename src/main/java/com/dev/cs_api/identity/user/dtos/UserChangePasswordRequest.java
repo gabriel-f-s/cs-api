@@ -1,4 +1,4 @@
-package com.dev.cs_api.identity.user.dtos.user;
+package com.dev.cs_api.identity.user.dtos;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;

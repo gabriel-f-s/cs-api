@@ -1,9 +1,9 @@
 package com.dev.cs_api.identity.user.services;
 
-import com.dev.cs_api.identity.user.dtos.admin.AdminDetailResponse;
-import com.dev.cs_api.identity.user.dtos.admin.AdminUpdateRequest;
-import com.dev.cs_api.identity.user.dtos.global.AdminCreateRequest;
-import com.dev.cs_api.identity.user.dtos.global.AdminUserSummaryResponse;
+import com.dev.cs_api.identity.user.dtos.AdminDetailResponse;
+import com.dev.cs_api.identity.user.dtos.AdminUpdateRequest;
+import com.dev.cs_api.identity.user.dtos.AdminCreateRequest;
+import com.dev.cs_api.identity.user.dtos.AdminUserSummaryResponse;
 import com.dev.cs_api.identity.user.enums.RoleName;
 import com.dev.cs_api.identity.user.enums.UserStatus;
 import com.dev.cs_api.identity.user.models.Admin;
