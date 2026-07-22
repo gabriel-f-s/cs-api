@@ -117,7 +117,7 @@ public class TenantUserService {
     @Transactional
     public void toggleStatus(UUID userId) {
         User user = findUser(userId);
-        if (user.getStatus().equals(UserStatus.ACTIVE)) {
+        if (user.getStatus() == UserStatus.ACTIVE) {
             user.setStatus(UserStatus.DISABLED);
         } else  { user.setStatus(UserStatus.ACTIVE); }
         userRepository.save(user);

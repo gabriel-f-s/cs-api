@@ -89,15 +89,15 @@ public class AdminUserService {
         return new AdminDetailResponse(adminRepository.save(admin));
     }
 
-    public AdminDetailResponse toggleStatus(UUID id) {
+    @Transactional
+    public void toggleStatus(UUID id) {
         Admin admin = findAdmin(id);
-
         if (admin.getStatus() == UserStatus.ACTIVE) {
             admin.setStatus(UserStatus.DISABLED);
         } else  {
             admin.setStatus(UserStatus.ACTIVE);
         }
-        return new AdminDetailResponse(adminRepository.save(admin));
+        adminRepository.save(admin);
     }
 
     @Transactional
