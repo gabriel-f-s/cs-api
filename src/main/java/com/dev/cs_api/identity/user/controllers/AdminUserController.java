@@ -20,7 +20,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/admins")
 @Tag(name = "Identity - Administradores do Sistema", description = "Gestão de Administradores do Sistema")
-@PreAuthorize("hasAuthority('SYSTEM_ADMIN')")
+@PreAuthorize("hasRole('SYSTEM_ADMIN')")
 public class AdminUserController {
 
     private final AdminUserService adminUserService;
@@ -49,9 +49,9 @@ public class AdminUserController {
                 ServletUriComponentsBuilder
                         .fromCurrentRequest()
                         .path("/{id}")
-                        .buildAndExpand(response)
+                        .buildAndExpand(response.id())
                         .toUri()
-        ).build();
+        ).body(response);
     }
 
     @Operation(summary = "Atualiza parcialmente um administrador")

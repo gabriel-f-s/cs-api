@@ -51,9 +51,9 @@ public class TenantUserController {
                 ServletUriComponentsBuilder
                         .fromCurrentRequest()
                         .path("/{id}")
-                        .buildAndExpand(response)
+                        .buildAndExpand(response.id())
                         .toUri()
-        ).build();
+        ).body(response);
     }
 
     @Operation(summary = "Atualiza parcialmente um usuário")
