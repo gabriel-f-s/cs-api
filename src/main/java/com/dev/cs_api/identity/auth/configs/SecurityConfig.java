@@ -12,6 +12,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
@@ -20,6 +22,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @Configuration
@@ -67,13 +71,24 @@ public class SecurityConfig {
 
     @Bean
     public JwtAuthenticationConverter jwtAuthenticationConverter() {
-        JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
-        grantedAuthoritiesConverter.setAuthoritiesClaimName("authorities");
-        grantedAuthoritiesConverter.setAuthorityPrefix("");
+        JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
 
-        JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
-        jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
-        return jwtAuthenticationConverter;
+        converter.setJwtGrantedAuthoritiesConverter(jwt -> {
+            JwtGrantedAuthoritiesConverter defaultConverter = new JwtGrantedAuthoritiesConverter();
+            defaultConverter.setAuthoritiesClaimName("authorities");
+            defaultConverter.setAuthorityPrefix("");
+
+            Collection<GrantedAuthority> authorities = new ArrayList<>(defaultConverter.convert(jwt));
+
+            String role = jwt.getClaimAsString("role");
+            if (role != null && !role.isBlank()) {
+                authorities.add(new SimpleGrantedAuthority("ROLE_" + role));
+            }
+
+            return authorities;
+        });
+
+        return converter;
     }
 
     @Bean
