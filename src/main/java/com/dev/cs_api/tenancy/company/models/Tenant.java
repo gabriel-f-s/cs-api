@@ -1,7 +1,7 @@
-package com.dev.cs_api.tenancy.models;
+package com.dev.cs_api.tenancy.company.models;
 
-import com.dev.cs_api.tenancy.enums.TenantPlan;
-import com.dev.cs_api.tenancy.enums.TenantStatus;
+import com.dev.cs_api.tenancy.company.enums.TenantPlan;
+import com.dev.cs_api.tenancy.company.enums.TenantStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -38,7 +38,7 @@ public class Tenant {
     @Column(name = "phone_number")
     private String phoneNumber;
 
-    @OneToOne(mappedBy = "tenant", cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = false)
+    @OneToOne(mappedBy = "tenant", cascade = CascadeType.ALL, optional = false)
     private TenantCustomization customization;
 
     @Enumerated(EnumType.STRING)

@@ -1,4 +1,4 @@
-package com.dev.cs_api.tenancy.models;
+package com.dev.cs_api.tenancy.company.models;
 
 import jakarta.persistence.*;
 import lombok.Getter;

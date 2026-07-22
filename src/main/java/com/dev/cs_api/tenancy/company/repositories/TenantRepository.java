@@ -1,6 +1,6 @@
-package com.dev.cs_api.tenancy.repositories;
+package com.dev.cs_api.tenancy.company.repositories;
 
-import com.dev.cs_api.tenancy.models.Tenant;
+import com.dev.cs_api.tenancy.company.models.Tenant;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.UUID;

@@ -1,9 +1,9 @@
-package com.dev.cs_api.tenancy.services;
+package com.dev.cs_api.tenancy.company.services;
 
 import com.dev.cs_api.core.security.SecurityUtils;
-import com.dev.cs_api.tenancy.dtos.tenant.TenantBrandingResponse;
-import com.dev.cs_api.tenancy.models.Tenant;
-import com.dev.cs_api.tenancy.repositories.TenantRepository;
+import com.dev.cs_api.tenancy.company.dtos.TenantBrandingResponse;
+import com.dev.cs_api.tenancy.company.models.Tenant;
+import com.dev.cs_api.tenancy.company.repositories.TenantRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
