@@ -1,6 +1,7 @@
 package com.dev.cs_api.core.exceptions;
 
 import com.dev.cs_api.core.BaseExceptionHandler;
+import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
@@ -59,6 +60,19 @@ public class GlobalExceptionHandler extends BaseExceptionHandler {
                 exception.getMessage(),
                 "Recurso não Encontrado",
                 "urn:cs-api:core:entity-not-found",
+                "core"
+        );
+    }
+
+    @ExceptionHandler(EntityExistsException.class)
+    public ProblemDetail handleEntityExistsException(
+            EntityExistsException exception
+    ) {
+        return createProblemDetail(
+                HttpStatus.CONFLICT,
+                exception.getMessage(),
+                "Recurso Já Existe",
+                "urn:cs-api:core:entity-exists",
                 "core"
         );
     }
