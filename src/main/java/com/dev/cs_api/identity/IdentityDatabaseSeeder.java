@@ -1,12 +1,12 @@
 package com.dev.cs_api.identity;
 
+import com.dev.cs_api.identity.user.enums.PermissionName;
+import com.dev.cs_api.identity.user.enums.RoleName;
+import com.dev.cs_api.identity.user.enums.UserStatus;
 import com.dev.cs_api.identity.user.models.Admin;
 import com.dev.cs_api.identity.user.models.Permission;
 import com.dev.cs_api.identity.user.models.Role;
 import com.dev.cs_api.identity.user.models.User;
-import com.dev.cs_api.identity.user.enums.PermissionName;
-import com.dev.cs_api.identity.user.enums.RoleName;
-import com.dev.cs_api.identity.user.enums.UserStatus;
 import com.dev.cs_api.identity.user.repositories.PermissionRepository;
 import com.dev.cs_api.identity.user.repositories.RoleRepository;
 import com.dev.cs_api.identity.user.repositories.UserRepository;
@@ -17,7 +17,10 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
 @Component
 @Profile("dev")
@@ -41,7 +44,7 @@ public class IdentityDatabaseSeeder implements CommandLineRunner {
         if (userRepository.count() == 0) {
             List<Role> roles = createRolesAndPermissions();
             LOGGER.info("Empty database! Creating the first System Administrator...");
-            createAdminAccount(roles.getFirst());
+            createAdminAccount(roles.get(0));
             LOGGER.info("Admin account successfully created! Email: admin@master.com | Password: Master@2026");
             createUserAccount(roles.get(1));
             LOGGER.info("User account successfully created! Email: user@email.com | Password: User@2026");
@@ -71,23 +74,48 @@ public class IdentityDatabaseSeeder implements CommandLineRunner {
     }
 
     private List<Role> createRolesAndPermissions() {
+        Map<PermissionName, Permission> permMap = new HashMap<>();
+        List<Permission> allPerms = new ArrayList<>();
+
+        for (PermissionName pName : PermissionName.values()) {
+            Permission perm = new Permission();
+            perm.setName(pName.getPermission());
+            perm.setDescription("Permissão para " + pName.getPermission());
+            permMap.put(pName, perm);
+            allPerms.add(perm);
+        }
+        permissionRepository.saveAll(allPerms);
+
         Role systemAdmin = new Role();
         systemAdmin.setName(RoleName.SYSTEM_ADMIN);
+        systemAdmin.setDescription("Administrador do Sistema");
+        allPerms.forEach(systemAdmin::addPermission);
+
         Role tenantAdmin = new Role();
         tenantAdmin.setName(RoleName.TENANT_ADMIN);
-        Permission tenantWritePermission = new Permission();
-        tenantWritePermission.setName(PermissionName.TENANT_CREATE.getPermission());
-        Permission tenantReadPermission = new Permission();
-        tenantReadPermission.setName(PermissionName.TENANT_READ.getPermission());
-        Permission userReadPermission = new Permission();
-        userReadPermission.setName(PermissionName.USER_READ.getPermission());
-        permissionRepository.saveAll(List.of(tenantWritePermission, tenantReadPermission, userReadPermission));
+        tenantAdmin.setDescription("Administrador da Empresa");
+        tenantAdmin.addPermission(permMap.get(PermissionName.TENANT_READ));
+        tenantAdmin.addPermission(permMap.get(PermissionName.TENANT_UPDATE));
+        tenantAdmin.addPermission(permMap.get(PermissionName.USER_CREATE));
+        tenantAdmin.addPermission(permMap.get(PermissionName.USER_READ));
+        tenantAdmin.addPermission(permMap.get(PermissionName.USER_UPDATE));
+        tenantAdmin.addPermission(permMap.get(PermissionName.USER_DELETE));
 
-        systemAdmin.addPermission(tenantWritePermission);
-        systemAdmin.addPermission(tenantReadPermission);
-        systemAdmin.addPermission(userReadPermission);
-        tenantAdmin.addPermission(tenantReadPermission);
-        roleRepository.saveAll(List.of(systemAdmin, tenantAdmin));
-        return List.of(systemAdmin, tenantAdmin);
+        Role manager = new Role();
+        manager.setName(RoleName.MANAGER);
+        manager.setDescription("Gerente da Empresa");
+        manager.addPermission(permMap.get(PermissionName.TENANT_READ));
+        manager.addPermission(permMap.get(PermissionName.USER_CREATE));
+        manager.addPermission(permMap.get(PermissionName.USER_READ));
+        manager.addPermission(permMap.get(PermissionName.USER_UPDATE));
+
+        Role operator = new Role();
+        operator.setName(RoleName.OPERATOR);
+        operator.setDescription("Operador");
+        operator.addPermission(permMap.get(PermissionName.TENANT_READ));
+        operator.addPermission(permMap.get(PermissionName.USER_READ));
+
+        roleRepository.saveAll(List.of(systemAdmin, tenantAdmin, manager, operator));
+        return List.of(systemAdmin, tenantAdmin, manager, operator);
     }
 }
