@@ -14,7 +14,7 @@ spring:
         max-page-size: 100
 
   profiles:
-    active: dev
+    active: prod
 
 rsa:
   public-key: classpath:certs/public.pem

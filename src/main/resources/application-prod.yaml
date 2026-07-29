@@ -13,6 +13,6 @@ spring:
       enabled: false
 
   datasource:
-    url: ${DB_PROD_URL}
-    username: ${DB_PROD_USER}
-    password: ${DB_PROD_PASSWORD}
+    url: ${DB_PROD_URL:jdbc:postgresql://localhost:5432/controle-smart-prod}
+    username: ${DB_PROD_USER:${DATABASE_USERNAME:postgres}}
+    password: ${DB_PROD_PASSWORD:${DATABASE_PASSWORD:postgres}}
