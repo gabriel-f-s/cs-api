@@ -1,16 +1,19 @@
 package com.dev.cs_api.identity.user.dtos;
 
+import com.dev.cs_api.identity.user.enums.RoleName;
+import com.dev.cs_api.identity.user.enums.UserStatus;
 import com.dev.cs_api.identity.user.models.Admin;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 public record AdminDetailResponse(
-        String id,
+        UUID id,
         String name,
         String email,
         String phoneNumber,
-        String role,
-        String status,
+        RoleName role,
+        UserStatus status,
         LocalDateTime createdAt,
         LocalDateTime updatedAt,
         LocalDateTime lastLoginAt,
@@ -19,12 +22,12 @@ public record AdminDetailResponse(
 ) {
     public AdminDetailResponse(Admin admin) {
         this(
-                admin.getId().toString(),
+                admin.getId(),
                 admin.getName(),
                 admin.getEmail(),
                 admin.getPhoneNumber(),
-                admin.getRole().getName().toString(),
-                admin.getStatus().toString(),
+                admin.getRole().getName(),
+                admin.getStatus(),
                 admin.getCreatedAt(),
                 admin.getUpdatedAt(),
                 admin.getLastLoginAt(),

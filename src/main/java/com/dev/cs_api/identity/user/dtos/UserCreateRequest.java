@@ -3,6 +3,7 @@ package com.dev.cs_api.identity.user.dtos;
 import com.dev.cs_api.identity.user.enums.RoleName;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 public record UserCreateRequest(
@@ -16,7 +17,7 @@ public record UserCreateRequest(
         String password,
         @NotBlank(message = "Telefone é obrigatório")
         String phoneNumber,
-        @NotBlank(message = "Role é obrigatório")
+        @NotNull(message = "Role é obrigatório")
         RoleName role
 ) {
 }

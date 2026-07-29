@@ -1,4 +1,4 @@
-package com.dev.cs_api.orchestrator.admin_backoffice;
+package com.dev.cs_api.orchestrator.admin_user_tenant;
 
 import java.time.LocalDateTime;
 import java.util.UUID;

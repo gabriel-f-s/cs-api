@@ -1,4 +1,4 @@
-package com.dev.cs_api.orchestrator.admin_backoffice;
+package com.dev.cs_api.orchestrator.admin_user_tenant;
 
 import com.dev.cs_api.identity.api.*;
 import com.dev.cs_api.tenancy.api.TenantCompanyResponse;

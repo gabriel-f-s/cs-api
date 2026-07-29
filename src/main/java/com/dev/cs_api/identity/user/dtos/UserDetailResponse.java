@@ -5,9 +5,10 @@ import com.dev.cs_api.identity.user.enums.UserStatus;
 import com.dev.cs_api.identity.user.models.User;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 public record UserDetailResponse(
-        String id,
+        UUID id,
         String name,
         String email,
         String phoneNumber,
@@ -18,7 +19,7 @@ public record UserDetailResponse(
 ) {
     public UserDetailResponse(User user) {
         this(
-                user.getId().toString(),
+                user.getId(),
                 user.getName(),
                 user.getEmail(),
                 user.getPhoneNumber(),

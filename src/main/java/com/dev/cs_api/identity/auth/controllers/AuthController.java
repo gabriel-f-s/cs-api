@@ -83,12 +83,18 @@ public class AuthController {
 
     private Map<String, String> getUserAgentAndIpAddress(HttpServletRequest servletRequest) {
         String userAgent = servletRequest.getHeader("User-Agent");
+        if (userAgent == null) {
+            userAgent = "";
+        }
         String ipAddress = servletRequest.getHeader("X-Forwarded-For");
         if (ipAddress == null || ipAddress.isEmpty() || "unknown".equalsIgnoreCase(ipAddress)) {
             ipAddress = servletRequest.getRemoteAddr();
         } else {
             ipAddress = ipAddress.split(",")[0].trim();
         }
-        return new HashMap<>(Map.of("userAgent", userAgent, "ipAddress", ipAddress));
+        if (ipAddress == null) {
+            ipAddress = "";
+        }
+        return Map.of("userAgent", userAgent, "ipAddress", ipAddress);
     }
 }
